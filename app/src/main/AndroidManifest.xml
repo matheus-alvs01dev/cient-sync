@@ -25,6 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ListaActivity"
+            android:label="Lista de Clientes"
+            android:theme="@style/Theme.ClientSync" />
     </application>
 
 </manifest>
