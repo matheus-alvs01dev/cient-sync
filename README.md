@@ -1,3 +1,18 @@
+## Desenvolvimento de um pequeno App Android (15pts)
+Grupo de quatro pessoas: Matheus Alves
+
+## Proposta
+Desenvolver um aplicativo para o S.O. Android (utilizando Android Studio), aplicando os
+seguintes conceitos dentro desta plataforma:
+ Activities
+ Intents
+ Consumo de uma pequena api(Exemplo de uma disponibilizada:
+(http://hwsistemas.homelinux.com/apiclienteteste/api/cliente/retornaclientes?tipo
+=json)
+ AsyncTask ou thread
+ Gravar dados no banco de dados local SQLite
+Data da apresentação: __/__/____.
+
 # ClientSync
 
 Aplicativo Android de sincronização de clientes via API REST, desenvolvido como projeto acadêmico.
