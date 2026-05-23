@@ -1,47 +1,76 @@
 package com.example.clientsync
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.clientsync.ui.theme.ClientSyncTheme
+import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.concurrent.Executors
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var dbHelper: DatabaseHelper
+
+    companion object {
+        private const val API_URL =
+            "http://hwsistemas.homelinux.com/apiclienteteste/api/cliente/retornaclientes?tipo=json"
+        private const val TIMEOUT = 10000
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            ClientSyncTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+        setContentView(R.layout.activity_main)
+
+        dbHelper = DatabaseHelper(this)
+
+        val btnSincronizar = findViewById<Button>(R.id.btn_sincronizar)
+        btnSincronizar.setOnClickListener {
+            sincronizarClientes()
+        }
+    }
+
+    private fun sincronizarClientes() {
+        val executor = Executors.newSingleThreadExecutor()
+        executor.execute {
+            try {
+                val jsonArray = baixarClientes()
+                salvarClientes(jsonArray)
+                mostrarMensagem("Sincronização concluída!")
+            } catch (e: Exception) {
+                mostrarMensagem("Erro: ${e.message}")
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    private fun baixarClientes(): JSONArray {
+        val connection = URL(API_URL).openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connectTimeout = TIMEOUT
+        connection.readTimeout = TIMEOUT
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ClientSyncTheme {
-        Greeting("Android")
+        val response = BufferedReader(InputStreamReader(connection.inputStream)).use { reader ->
+            reader.readText()
+        }
+        connection.disconnect()
+
+        return JSONArray(response)
+    }
+
+    private fun salvarClientes(jsonArray: JSONArray) {
+        for (i in 0 until jsonArray.length()) {
+            val cliente = jsonArray.getJSONObject(i)
+            dbHelper.inserirCliente(cliente)
+        }
+    }
+
+    private fun mostrarMensagem(mensagem: String) {
+        runOnUiThread {
+            Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show()
+        }
     }
 }
