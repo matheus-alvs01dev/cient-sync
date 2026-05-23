@@ -1,5 +1,6 @@
 package com.example.clientsync
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
                 val jsonArray = baixarClientes()
                 salvarClientes(jsonArray)
                 mostrarMensagem("Sincronização concluída!")
+                abrirListaClientes()
             } catch (e: Exception) {
                 mostrarMensagem("Erro: ${e.message}")
             }
@@ -71,6 +73,12 @@ class MainActivity : AppCompatActivity() {
     private fun mostrarMensagem(mensagem: String) {
         runOnUiThread {
             Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun abrirListaClientes() {
+        runOnUiThread {
+            startActivity(Intent(this, ListaActivity::class.java))
         }
     }
 }
