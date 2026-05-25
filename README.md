@@ -114,7 +114,7 @@ Tabela `clientes`:
 
 1. **Clone o projeto** (ou abra a pasta no Android Studio)
    ```bash
-   git clone <url-do-repositorio>
+   git clone https://github.com/matheus-alvs01dev/cient-sync
    ```
 
 2. **Abra no Android Studio**
